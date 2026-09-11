@@ -2,3 +2,4 @@
 
 test 1 :
 gitignore dosyası oluşturuldu ve denemeleri yapıldı
+
