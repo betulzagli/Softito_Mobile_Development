@@ -1,4 +1,4 @@
 # Softito_Mobile_Development
 
-test 1 
+test 1 :
 gitignore dosyası oluşturuldu ve denemeleri yapıldı
