@@ -1,0 +1,25 @@
+
+ANDROID İÇİN
+
+//tüm sayfalara konur alttaki şekilde yazılırsa
+window.setFlags{
+    WindowManager.LayoutParams.FLAG_SECURE,
+    WindowManager.LayoutParams.FLAG_SECURE,
+} //windows doğru girdiğimizden emin olmak için iki kere girdirir.
+
+setContentView(R.Layout.activity_main) 
+
+//bir sayfa özelinde bu özelliği kullanmak istemiyorsak aşağıdaki satır girilir.
+window.clearFlag(WindowManager.LayoutParams.FLAG_SECURE)
+
+IOS İÇİN
+
+import UIKit;
+
+// ekran blur ve karaltma işlemleri
+
+private func checkScreenRecord(){
+    if (UIScreen.main.isCaptured){
+        print("Uyarı! Cihazda ekran kaydı açık.");
+    }
+}
