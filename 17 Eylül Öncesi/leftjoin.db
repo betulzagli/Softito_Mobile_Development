@@ -1,0 +1,2 @@
+SELECT e.name AS calisan_adi, IFNULL (manager.name,'Yoneticisi yok.') AS yonetici_adi
+FROM employees e LEFT JOIN employees m ON e.manager_id=m.id;
