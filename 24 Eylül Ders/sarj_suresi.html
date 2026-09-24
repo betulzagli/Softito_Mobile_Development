@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+
+        const surehesapla=(mevcut,hedef,bataryakW,istasyonKw)=>{
+          const fark=hedef-mevcut;
+          const dolacak_oran=fark/100;
+          const sure = (bataryakW * dolacak_oran)/istasyonKw;
+          const sure_dk=sure*60;  
+          return sure_dk;
+        }
+
+
+        const tarifeHesapla = (baslangic, bitis) => {
+
+            const gunduzTarife = 5;
+            const geceTarife = 3;
+
+            const baslangicSaat = baslangic.getHours();
+            const bitisSaat = bitis.getHours();
+
+            let gunduzSaat = 0;
+            let geceSaat = 0;
+
+            if (baslangicSaat < 22 && bitisSaat > 22) {
+                gunduzSaat = 22 - baslangicSaat;
+                geceSaat = bitisSaat - 22;
+            }
+            else if (bitisSaat <= 22) {
+                gunduzSaat = bitisSaat - baslangicSaat;
+            }
+            else {
+                geceSaat = bitisSaat - baslangicSaat;
+            }
+
+            const gunduzFiyat = gunduzSaat * gunduzTarife;
+            const geceFiyat = geceSaat * geceTarife;
+
+            return gunduzFiyat + geceFiyat;
+        };
+    </script>
+</body>
+
+</html>
