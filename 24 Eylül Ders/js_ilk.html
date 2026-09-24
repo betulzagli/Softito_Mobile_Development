@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Js ilk ders</title>
+</head>
+<body>
+    
+
+
+
+
+    <script>
+
+        
+
+        //var felaketi: süslü parantez dinlemez dışarıya sızdırır
+        if(true){
+            var tehlikeliSayi=999;
+        }
+
+        console.log("var sızdı mı",tehlikeliSayi);
+
+        //2. let ve const kalkanı: süslü parantez bir oda ve çıkış yasak
+
+        if(true){
+            let guvenliSayi=42;
+            const PI=3.1415;
+            console.log("oda içi",guvenliSayi,PI);
+        }
+
+        console.log(guvenliSayi);
+
+        //3. const değiştirilmezlik kuralı
+        const API_URL="https://www.kodusta.com/v1";
+        console.log(API_URL);
+       // let API_URL="tekrar eden link";
+
+       //DİKKAT
+       const arac={marka:"togg",model:"t10x"};
+       arac.renk="beyaz";
+       console.log(arac);
+
+       //yasak kullanım
+       arac={baska:"obje"};
+       console.log(arac);
+
+       
+
+
+
+       
+       //VERİ TİPLERİ VE TİP DÖNÜŞÜMLERİ
+       const isim="Selahaddin";   //string
+       const bataryaKapasitesi=88.5;  //number float int ayrım almıyor
+       const sarjTamamlandi=false; //boolean
+       let sonrakiRandevu; //undefined kutu var içi boş
+
+       const servisNotu=null;  //null bilinçli olarak boş bırakılan değer
+       const buyukSayi=6573853598395835;  //big int
+       const gizliAnahtar=Symbol("id");  //symbol
+
+       console.log(typeof isim);
+       console.log(typeof bataryaKapasitesi);
+       console.log(typeof sarjTamamlandi);
+       console.log(typeof sonrakiRandevu);
+       console.log(typeof servisNotu);
+
+      
+
+        
+      //OTOMATİK TİP ÇEVRİMİ
+      console.log("5"+2); //+ metin birleştirme yapar matematiksel işlem değildir. toplama yapılacaksa number formatında veri girilmelidir
+      console.log("5"-2); //- işiareti stringi zorla sayıya çevirir
+
+      console.log("5"*"4"); //çarpma işlemi sayıya çevirir
+      console.log("bes"*2); //NaN çıkar. hata alırız. 
+      
+
+      console.log(typeof NaN);
+      console.log(NaN===NaN);
+      console.log(Number.isNaN(NaN));
+
+
+      //manuel tip dönüştürme profosoyonel
+      const stringFiyat="1473.33";
+      const sayiFiyati=Number(stringFiyat);
+      const pixelDegeri=parseInt("48px",10);
+      const metinSayi=String(2026);
+
+      console.log(sayiFiyati);
+      console.log(stringFiyat);
+      console.log(pixelDegeri);
+      console.log(metinSayi);
+
+
+      //katı eşitlik
+      //Neden her zaman === kullanmalıyız? hem tip hem değer karşılaştırması yapar
+      console.log(5=="5"); //true. gevşek eşitlik, tipi zorla çevirir ASLA KULLANMA
+      console.log(5==="5"); //false. 
+      console.log(0==false); //true. gevşek eşitlik. felaket
+      console.log(0===false); //false
+      console.log(null==undefined); //true hatalı
+      console.log(null===undefined); //false
+
+
+      //template literals
+      const kullanici="esra ergün";
+      const bakiye=1000;
+      const harcama=10000;
+
+      const eskiMesaj="Sayin "+kullanici + ", Kalan Bakiyeniz: " + (bakiye-harcama) + "TL'dir."
+      console.log(eskiMesaj);
+
+      //modern e6 stamdatları
+      const modernMesaj=`Sayın ${kullanici},
+      Bugünkü Harcamanız: ${harcama}tl,
+      kalan bakiyeniz: ${bakiye-harcama}tl
+      durum: ${bakiye-harcama>1000 ? "güvenli bakiye" : "kritik bakiye"}`;
+      console.log(modernMesaj);
+
+      
+      
+
+
+
+
+      
+
+
+
+      
+
+    </script>
+</body>
+</html>

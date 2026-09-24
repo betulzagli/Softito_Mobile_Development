@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        const bataryaSeviyesi = 14;
+        const istasyonUygunMu = true;
+        const bakiyeTl = 450;
+        const minimumGirisTutari = 200;
+
+        if (!istasyonUygunMu) {
+            console.log("istasyon şuan servis dışı ya da öeşgul");
+        } else if (bakiyeTl < minimumGirisTutari) {
+            console.log(`bakiye yetersiz en az {minimumGirisTutari} gereklidir. Mevcut: ${bakiyeTL} tl.`);
+        } else {
+            console.log("stamdart şarj başlatılabilir.")
+        }
+
+
+        //jsde şu 6 değer false olarak kabul edilir
+        //false ,0,"",null,undefined,NaN
+        //bunun dışındaki her şey [] boş dizi olarak true olarak kabul edilir
+
+        const kullaniciGirdisi="";
+        if(kullaniciGirdisi){
+            console.log("girdi dolu")
+        }else{
+            console.log("girdi boş");
+        }
+
+
+        //koşul ? dogruysa_deger: yanlissa_deger
+        const soketDurumu="mesgul";
+        const durumMesajı=soketDurumu==="uygun" ? "soket boşta " :" soket boşta";
+        console.log(durumMesajı);
+
+        //arrow function
+
+        //klasik fucn
+        function toplaKlasik(sayi1,sayi2){
+            return sayi1 + sayi2;
+        }
+
+        //modern func es6 standrt
+        const toplaModern=(sayi1,sayi2)=>{
+            return sayi1 +sayi2;
+        }
+
+        //tek satırlık func arrow
+        const toplaKisa=(sayi1,sayi2)=>sayi1+sayi2;
+
+        //tek parametreli 
+        const karesiniAl= sayi=> sayi*sayi;
+
+        const profilUret=(ad,rol)=>({
+            ad:ad,
+            rol:rol,
+            kayitTarihi:2026
+        });
+
+        console.log("topplama sonucu",toplaKlasik(15,27));
+        console.log(karesiniAl(8));
+        console.log("profil",profilUret("tuba","öğrenci"));
+
+        //indirimli sepet tutarı hesaplayıcı
+        const indirimHesapla=(sepet,indirim)=>{
+            sepet = sepet - (sepet * (indirim)/100);
+        }
+
+        //şarj süresi tahmin edici dk cinsinden verilecekler : mevuct yüzde, hedef yüzde, batarya kw, istasyon kw
+        const surehesapla=(mevcut,hedef,bataryakW,istasyonKw)=>{
+          const fark=hedef-mevcut;
+          const dolacak_oran=fark/100;
+          const sure = (bataryakW * dolacak_oran)/istasyonKw;
+          const sure_dk=sure*60;  
+          return sure_dk;
+        }
+
+        
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>
