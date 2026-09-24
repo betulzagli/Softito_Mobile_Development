@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Softito - Minimalist Tasarım</title>
+
+    <style>
+        *,*::before,*::after{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root{
+            --bg-page:#f7f6f2;
+            --bg-card:#ffffff;
+            --border-subtle:#e6e4df;
+            --border-strong:#1e1d1b;
+            --text-main:#181716;
+            --text-muted:#6e6c66;
+            --clay:#b85430;
+            --sand:#ece9e2;
+            --max-width:1140px;
+        }
+
+        body{
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            padding: 32px 20px 80px;
+            line-height: 1.5;
+        }
+
+        .konsol-header{
+            max-width: var(--max-width);
+            margin: 0 auto 48px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 24px;
+        }
+
+        .konsol-header__topbar{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .konsol-header__logo{
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .konsol-header__edition{
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .konsol-header__hero{
+            margin-top: 16px;
+        }
+
+        .konsol-header__title{
+            font-size: clamp(2rem,5vm,3.4rem);
+            font-weight: 800;
+            letter-spacing: -1.2px;
+            line-height: 1.15;
+            max-width: 780px;
+        }
+
+        .konsol-header__subtitle{
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            max-width: 580px;
+        }
+
+        .konsol-grid{
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 28px;
+        }
+
+        @media(min-width:680px){
+            .konsol-grid{
+            grid-template-columns: repeat(2,1fr);
+            }
+        }
+
+        @media(min-width:1024px){
+            .konsol-grid{
+            grid-template-columns: repeat(3,1fr);
+            }
+        }
+
+        .konsol-card{
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+
+        .konsol-card:hover{
+            transform: translateY(-5px);
+            border-color: #cfccc4;
+        }
+
+        .konsol-card__media{
+            height: 240px;
+            background: var(--sand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            position: relative;
+        }
+
+        .konsol-card__badge{
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            background: var(--bg-card);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .konsol-card__body{
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        .konsol-card__category{
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 700;
+            color: var(--clay);
+        }
+
+        .konsol-card__title{
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+            color: var(--text-main);
+        }
+
+        .konsol-card__text{
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .konsol-card__footer{
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .konsol-card__price{
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .konsol-card__btn{
+            background: transparent;
+            border: 1px solid var(--border-strong);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .konsol-card__btn:hover{
+            background: var(--border-strong);
+            color: #ffffff;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <!-- başlık ve filtre -->
+    <header class="konsol-header">
+        <div class="konsol_hader__topbar">
+            <span class="konsol-header__logo">Softito Logo</span>
+            <span class="konsol-header__edition">Koleksiyon No: 04 / 2026</span>
+        </div>
+
+        <div class="konsol-header__hero">
+            <h1 class="konsol-header__title">Göz Yormayan, insan odaklı yaşam alanları</h1>
+            <p class="konsol-header__subtitle">Yapay zekanın klişe neonlarından uzak;doğal ahşap ve taş dokulu tasarımlar</p>
+        </div>
+    </header>
+
+    <main class="konsol-grid">
+
+
+        <article class="konsol-card">
+            <div class="konsol-card__media">
+                🍶
+                <span class="konsol-card__badge">Stokta 3 Adet</span>
+            </div>
+
+            <div class="konsol-card__body">
+                <span class="konsol-card__category">Seramik Sanatı</span>
+                <h3 class="konsol-card__title">Hasır Dokulu Sake Seti </h3>
+                <p class="konsol-card_text">Bursa atölyelerinde fırınlanmış mat dokulu sırlı geleneksel seramik tasarımlar</p>
+            </div>
+
+            <div class="konsol-card__footer">
+                <span class="konsol-card__price">1.880 tl</span>
+                <button class="konsol-card__btn">İncele</button>
+            </div>
+        </article>
+
+
+        <article class="konsol-card">
+            <div class="konsol-card__media">
+                💡
+                <span class="konsol-card__badge" style="color: var(--clay);">Öne Çıkan</span>
+            </div>
+
+            <div class="konsol-card__body">
+                <span class="konsol-card__category">Aydınlatma</span>
+                <h3 class="konsol-card__title">Kağıt masa lambası </h3>
+                <p class="konsol-card_text">Işığı göz yormayan pirinç kağıdı abajür</p>
+            </div>
+
+            <div class="konsol-card__footer">
+                <span class="konsol-card__price">4.500 tl</span>
+                <button class="konsol-card__btn">İncele</button>
+            </div>
+        </article>
+
+
+        <article class="konsol-card">
+            <div class="konsol-card__media">
+                🪵
+                <span class="konsol-card__badge">Yeni Sezon</span>
+            </div>
+
+            <div class="konsol-card__body">
+                <span class="konsol-card__category">Mobilya</span>
+                <h3 class="konsol-card__title">Masif Dişbudak Sehpa</h3>
+                <p class="konsol-card_text">Hiç çivi kullanmadan birbirine geçmeli geleneksel ahşap sehpa</p>
+            </div>
+
+            <div class="konsol-card__footer">
+                <span class="konsol-card__price">7.500 tl</span>
+                <button class="konsol-card__btn">İncele</button>
+            </div>
+        </article>
+
+        
+    </main>    
+</body>
+
+</html>
