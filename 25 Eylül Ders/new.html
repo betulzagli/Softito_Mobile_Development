@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sipariş ve Gelir Kokpit Dashboard</title>
+    <style>
+        /*Bu kısım tüm sayfa için geçerlidir ve burası yazılmadan koda başlanmaz. iç ve dış boşlukları sıfırlar ve border-box ile ekran taşması önlenir*/
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /*bu kısım sayfamızda kullanacağımız renk kodlarını ve özellikleri bir değişkene atadığımız kısımdır. daha sonra buradaki isimlerini kullanarak kolayca çağırabiliriz*/
+        :root {
+            --bg: #f8f7f4;
+            --card: #ffffff;
+            --border: #e6e5df;
+            --text: #181716;
+            --muted: #6b6963;
+            --clay: #c85a32;
+            --clay-hover: #b04e29;
+            --font-main: 'Plus Jakarta Sans', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        /*görünen ekranın arka plan rengi, yazı stili ve rengi gibi özelliklerinin tanımlandığı yerdir. body aslında bizim html etiketimiz olan bodydir yani onun özelliklerini tanımlıyoruz*/
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            padding: 36px 16px;  /*iç boşluk*/
+            line-height: 1.5; /*satır yüksekliği*/
+        }
+
+        /*bu bizim tüm içeriğimizi saran en dış divin özelliklerinin tanımlandığı yerdir*/
+        .kokpit {
+            max-width: 960px;  /*maksimum genişlik*/
+            margin: 0 auto; /*bu satır sayfanın yatayda tam ortalanmasını sağlar*/
+        }
+
+        /* Header & KPI */
+
+        /*header kısmı bizim en yukarıda yazan ve aslında sayfamızın bir nevi adı olan kısımdır. header__tag ve header__title header'ın elementleridir */
+        .header {
+            margin-bottom: 24px; /*alttan dış boşluk*/
+            padding-bottom: 16px; /*alttan iç boşluk*/
+            border-bottom: 1px solid var(--border);  /*dış sınır ve rengi*/
+        }
+
+        /*üst başlık. */
+        .header__tag {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em; /*harfler arası boşluk*/
+            color: var(--clay); /*rengi önceden rootta tanımlanan değişken ile turuncu yapıldı*/
+            font-weight: 700;
+        }
+
+        /*ana başlık.*/
+        .header__title {
+            font-size: 26px; /*yazı büyüklüğü*/
+            font-weight: 700; /*yazı kalınlığı*/
+            margin-top: 2px;
+        }
+
+        /*bu kısım üst kısımda fiyatları gösteren bölüm için yazılmıştır. kpi-grid kayıtlı sipariş,toplam sipariş tutarı ve ortalama ürün fiyatı kartlarını kapsar*/
+        .kpi-grid {
+            display: grid; /*kartların düzenlenmesi için grid yapısı tercih ettik*/
+            grid-template-columns: repeat(3, 1fr); /* yan yana eşit üç  kart olsun dedik*/
+            gap: 14px; /*aralardaki boşluklar 14px olsun dedik*/
+            margin-bottom: 24px;
+        }
+
+        /*bu kısım ise 3 kartı da kapsayan ve özelliklerini belirleyen sınıftır.kpi-grid 3 kartı içerisine alırken bu sınıf da özelliklerini belirler*/
+        .kpi-card {
+            background: var(--card); /*renk*/
+            border: 1px solid var(--border); /*kartın dış sınır çizgisi*/
+            border-radius: 8px; /*kartın köşelerinin yuvarlarlığı*/
+            padding: 14px 18px; /*iç boşluklar*/
+        }
+
+        /*kart içeriisndeki span etiketinin özellikleri*/
+        .kpi-card span { 
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        /*kart içerisindeki h3 etiketinin özellikleri*/
+        .kpi-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            margin-top: 4px;
+        }
+
+        /* Layout */
+        /*burası bizim form ve siparişler listemizi barındıran ana sınıftır. */
+        .layout {
+            display: grid; /*form ve siparişler listesini yan yana dizmek için grid yapısı kullanıyoruz*/
+            grid-template-columns: 320px 1fr; /*form alanı 320px liste alanı ise geri kalan tüm boşluğu alır*/
+            gap: 24px; /*aralarındaki boşluk 24px ayarlanır*/
+        }
+
+        /*bu kısım ekran boyutunun durumuna göre tasarımımızın ayarlanması için eklendi*/
+        /*burada ekran boyutu 768px altına düştüğünde layout ve gridin tek sütuna düşmesini söyler böylece alt alta dizilen bir yapı elde edilir*/
+        @media (max-width: 768px) {
+
+            .layout,
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Form & Panel */
+        /*bu kısım form ve liste kısımlarına atadığımız özellikleri kapsar. formu da listeyi de panel altında sectionlara ayırarak yazdık*/
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        /*panel altındaki h4 etiketlerinin özelliklerini tanımlar*/
+        .panel h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /*field kısmı form altındaki ürün adı, kategorisi ve fiyatı kısımlarını ayrı alanlar olarak ayırmamızı sağlar.  */
+        .field {
+            margin-bottom: 12px;
+        }
+
+        /*field altındaki label etiketinin özellikleri*/
+        .field label {
+            display: block;/* bu kendisinden sonraki elemanın bir alt satırdan başlamasını sağlar çünkü yazıldığı elemanın tüm satırı kaplamasını söyler*/
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        /*bu kısım formumuzdaki input ve select etiketlerinin özellikleridir. input ve select ürün formunda ürünün adının,fiyatının alınmasına ve kategorisinin seçilmesini sağlar*/
+        .field input,
+        .field select {
+            width: 100%;
+            padding: 8px 10px;
+            font-size: 13px;
+            font-family: inherit;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        /*burası input ve select üzerine tıklandığında çalışacak özellikleri tanımlar. örneğin tıklanınca çerçevenin turuncu olması gibi */
+        .field input:focus,
+        .field select:focus {
+            outline: none;
+            border-color: var(--clay);
+            background: #fff;
+        }
+
+        /*bu bizim formu kaydet butonumuzun özellikleridir*/
+        .btn-submit {
+            width: 100%;
+            background: var(--clay);
+            color: #fff;
+            border: none;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer; /*üstüne gelindiğinde imlecin işaretçi olmasını sağlar*/
+            margin-top: 6px;
+        }
+
+        /*bu bizim butonumuzun üzerine gelindiğinde renginin değişmesini sağlar ve tasarıma güzellik katar*/
+        .btn-submit:hover {
+            background: var(--clay-hover);
+        }
+
+        /* Liste & Filtre */
+        /*burası bizim siparişler listemizi filtrelemek için kullanacağımız ürün adı arama ve kategori seçme kısmıdır*/
+        .filter-bar {
+            display: flex; /*yataya aldık elemanları*/
+            gap: 10px; /*aralarına boşluk koyduk*/
+            margin-bottom: 14px;
+        }
+
+        /*burası bizim tüm siparişlerimizin gözükeceği liste görünümüdür.elemanlar dikeyde dursun ve aralarında 10px boşluk olsun dedik*/
+        .order-list {
+            display: flex; 
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /*burası bizim listemize eklediğimiz her siparişi temsil eder. listeye eklenen siparişlerin kartı gibi diyebiliriz*/
+        .order-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between; /*elemanlar en köşelere itilir*/
+            align-items: center; /*dikeyde ortada*/
+        }
+
+        /*order item altındaki h5 etiketinin özellikleri*/
+        .order-item h5 {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /*order item altındaki p etiketinin özellikleri*/
+        .order-item p {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        /*bu kısım bizim sipariş kartlarımızdaki kategori bilgisi ve sil butonunu kapsayan çerçevedir*/
+        .meta-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /*burası sipariş kartındaki kategori bilgisinin yazdığı kutunun genel özellikleridir*/
+        .badge {
+            font-size: 11px;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-weight: 600;
+            background: #fef3c7;
+            color: #92400e;
+            font-family: var(--font-mono);
+        }
+
+        /*eğer sipariş mobilya kategorisindeyse arka plan ve yazı rengi bu olsun dedik*/
+        .badge--mobilya {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        /*eğer sipariş aydınlatma kategorisindeyse arka plan ve yazı rengi bu olsun dedik*/
+        .badge--aydinlatma {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        /*eğer sipariş mutfak kategorisindeyse arka plan ve yazı rengi bu olsun dedik*/
+        .badge--seramik {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        /*silme butonunun özelliler*/
+        .btn-del {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /*silme butonunun üzerine gelindiğinde çalışacak özellikler*/
+        .btn-del:hover {
+            background: #ef4444;
+            color: #fff;
+            border-color: #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+    <!--genel kapsayıcı divimiz-->
+    <div class="kokpit">
+
+        <!--en üst başlıklarımız-->
+        <header class="header">
+            <span class="header__tag">Sipariş Takip</span>
+            <h1 class="header__title">Sipariş Yönetim Kokpiti</h1>
+        </header>
+
+        <!--burası üst bilgilendirme kartlarımız-->
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <span>Kayıtlı Sipariş</span>
+                <h3 id="kpiCount">0</h3>
+            </div>
+
+            <div class="kpi-card">
+                <span>Toplam Sipariş Tutarı</span>
+                <h3 id="kpiTotal">0 tl</h3>
+            </div>
+
+            <div class="kpi-card">
+                <span>Ortalama Ürün Fiyatı</span>
+                <h3 id="kpiAvg">0 tl</h3>
+            </div>
+        </section>
+
+        <!--burası form ve sipariş listesini kapsayan ana bölümümüz-->
+        <main class="layout">
+            <!--formumuz-->
+            <section class="panel">
+                <h4>Yeni Sipariş Kaydı</h4>
+
+                <form id="orderForm">
+
+                    <div class="field">
+                        <label for="prod-name">Ürün Adı:</label>
+                        <input type="text" id="prod-name" placeholder="Sehpa" required>
+                    </div>
+
+
+                    <div class="field">
+                        <label for="prod-cat">Kategori:</label>
+                        <select name="prod-cat" id="prod-cat">
+                            <option value="Mobilya">Mobilya</option>
+                            <option value="Aydınlatma">Aydınlatma</option>
+                            <option value="Mutfak">Mutfak</option>
+                        </select>
+                    </div>
+
+
+                    <div class="field">
+                        <label for="prod-price">Fiyat</label>
+                        <input type="number" id="prod-price" value="3250" min="100" step="50" required>
+                        <button type="submit" class="btn-submit">Siparişi Kaydet</button>
+                    </div>
+
+                </form>
+            </section>
+
+            <!--sipariş listesi-->
+            <section class="panel">
+                <div class="filter-bar">
+                    <input type="text" id="searchInput" class="field" style="margin-bottom: 0;"
+                        placeholder="Ürünün adına göre filtrele">
+                    <select id="categoryFilter" style="width: 130p; font-size: 12px; padding: 6px;">
+                        <option value="ALL">Tüm Kategoriler</option>
+                        <option value="Mobilya">Mobilya</option>
+                        <option value="Aydınlatma">Aydınlatma</option>
+                        <option value="Mutfak">Mutfak</option>
+                    </select>
+                </div>
+
+                <!--dinamik olarak elemanlar buraya eklenecek-->
+                <div id="orderContainer" class="order-list"></div>
+            </section>
+
+        </main>
+
+    </div>
+
+
+
+    <script>
+        //sayfayı çalıştırdığımızda ekrana gelecek olan bizim önceden verdiğimiz sipariş bilgilerinin tanımlaması
+        //orders dizisi altındaki her nesnenin idsi adı kategorisi ve fiyatı tanımlandı
+        let orders = [
+            { id: 1, name: "Sehpa", category: "Mobilya", price: 6500 },
+            { id: 2, name: "Abajür", category: "Aydınlatma", price: 7500 },
+            { id: 3, name: "Koltuk", category: "Mobilya", price: 8500 },
+            { id: 4, name: "Bulaşık Makinesi", category: "Mutfak", price: 10000 },
+            { id: 5, name: "Ocak", category: "Mutfak", price: 15000 }
+        ];
+
+        //dom elementlerini toplama
+        //burada html içerisinde tanımladığımız ve js ile işlem yapmak istediğimiz elemanları js içerisinde kullanmak üzere bir değişkene atıyoruz.
+        const orderContainer = document.getElementById('orderContainer');
+        const orderForm = document.getElementById('orderForm');
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const kpiCount = document.getElementById('kpiCount');
+        const kpiTotal = document.getElementById('kpiTotal');
+        const kpiAvg = document.getElementById('kpiAvg');
+
+
+        //bu fonksiyon ekranda göreceğimiz sipariş bilgileri özet kısmı için güncelleme yapan bir fonksiyondur. datalist parametresi ile gelen nesneler için sayı,toplam tutar ve ortalama fiyat hesaplaması yapar.
+        //reduce fonksiyonu ile datalistten gelen verilerin price bilgileri toplanır.
+        //bu fonksiyon sayesinde sipariş sayısı, toplam fiyat ve ortalama fiyat güncellenmiş olarak ekranda gözükür
+        const updateKPIs = (datalist) => {
+            kpiCount.textContent = datalist.length;  //datalistin uzunluğunu alır ve kayıtlı siparişler yazısını günceller
+
+            if (datalist.length === 0) {  //eğer datalist boşsa yani hiç eleman yoksa kayıtlı sipariş ev fiyat kısımlarını sıfıra eşitler
+                kpiTotal.textContent = "0 tl";
+                kpiAvg.textContent = "0 tl";
+                return;
+            }
+
+            //toplam tutar v(reduce)
+            const total = datalist.reduce((acc, cur) => acc + cur.price, 0); //reduce ile nesnelerin fiyatları toplanır
+            kpiTotal.textContent = `${total.toLocaleString("tr-TR")} tl`;
+
+
+            //ortalama fiyat (.reduce)
+            const avg = total / datalist.length; //toplam fiyat nesne sayısına bölünerek ortalama hesaplanır
+            kpiAvg.textContent = `${Math.round(avg).toLocaleString("tr-TR")} tl`;
+        }
+
+
+        //bu fonksiyon oluşturduğumuz yeni sipariş ekle formunun çalışması ve sparişler tablosuna yeni eleman eklenmesi için yazılmıştır.
+        //addEventListener bizim formumuzdaki submit türünde tanımladığımız butonu dinler ve butona tıklandığında bu fonksiyonun çalışmasını sağlar.
+        orderForm.addEventListener("submit", function (e) {
+            e.preventDefault(); //bu komut form gönderildiğinde sayfa yenilenmesini engelleyerek önceki verilerin silinmesini önler.
+
+            const name = document.getElementById("prod-name").value.trim(); //bu kısım formdaki name alanına gelen değeri alır ve trim ile eğer girilen değerde boşluklar varsa temizler
+            const category = document.getElementById("prod-cat").value; //bu satır kategorisi bilgisini alır
+            const price = Number(document.getElementById("prod-price").value); //bu kısım ise alınan fiyat bilgisini stringten sayıya çevirir
+
+            const newOrder = { //formdan alınan yeni bilgiler newOrder nesnesi içerisine atılır.
+                id: orders.length + 1, //id sırayla artsın istediğimiz için orders dizisinin her seferinde bir fazlası alınır
+                name,
+                category,
+                price
+            };
+
+            orders.push(newOrder); //oluşturulan yeni nesne push fonksiyonu ile orders ana dizimizin içerisine yazılır.
+            orderForm.reset(); //submite tıklandığı için forma girilen bilgiler yeni bir sipariş kaydına hazırlanmak üzere temizlenir.
+            renderOrders(); // bu fonksiyon çalıştırılarak ekranda yeni bilgilerin gözükmesi ve ekranın güncellenmesi sağlanır.
+        });
+
+
+        // silme fonksiyonu
+        orderContainer.addEventListener("click", function (e) {
+            // burada tıklanan butonun silme butonu olup olmadığını kontrol ediyoruz. sil butonunu innerHtml içerisinde dinamik olarak oluşturmuştuk
+            if (e.target.dataset.action === "delete") {
+                const item = e.target.closest(".order-item"); //bu satırda tıklanan buton hangi etiketlerin altında bulunuyorsa o etiketler içerisinden order-item sınıfına dahil olan alınır 
+                const idToRemove = Number(item.getAttribute("data-id")); // bulunan etiket içerisindeki data-id bilgisi çekilir ve sayıya çevrilir
+                orders = orders.filter(order => order.id !== idToRemove); // burada bir kontrol yapıp orders listesini yeniden yazdırıyoruz. yaptığımız kontrol şu: listeyi baştan dönmeye başlıyoruz. eğer gezilen elemanın idsi bizim silmek istediğimiz elemanın idsine eşit değilse onu listeye alıyoruz
+                //eğer silmek istediğimiz elemana gelirsek order.id ile idToRemove birbirine eşit olacağı için bu elemanı atlıyoruz ve listeye almıyoruz. bu şekilde orders listesi güncellenmiş oluyor.
+                renderOrders(); //burada ise ekran güncellemesi yapmak için renderOrders fonksiyonumuzu çağırıyoruz. hem liste güncelleniyor hem de ekran.
+            }
+        });
+
+
+
+        //filtreleme bölümü dinamik dom yani render motoru
+        const renderOrders = () => {
+            const term = searchInput.value.toLowerCase().trim(); //searchInput yani ürünü adına göre filtrele kısmına girilen veri boşluklar kaldıırılarak ve küçük harfe çevrilerek alınır
+            const selectedCat = categoryFilter.value; //kategorisi seçme listesinden seçilen veri alınıp değişkene atılrı
+
+
+            //filtreleme bölümü
+            const filtered = orders.filter(order => { //bu bizim orders listemizdeki elemanları dönerek filtrelere uyan elemanın olup olmadığını kontrol eden fonksiyonumuzdur
+                const matchesName = order.name.toLowerCase().includes(term); //elemanların isimlerine bakılarak term içerisine attığımız ve kullanıcının filtrelemek istediği isim ile eşleşen bir eleman var mı bakılır.
+                const matchesCategory = selectedCat === "ALL" || order.category === selectedCat; //bu satırda ise eğer tüm kategoriler seçiliyse tüm ürünleri alır, eğer seçili bir kategori var ise eşleşen ürünleri alır
+                return matchesName && matchesCategory; // ürün ismi ve kategorisini atanan değişkenler ile döndürür
+            });
+
+            orderContainer.innerHTML = ""; //burada yeni listeyi ekrana yazdırmadan önce orderContainerın içerisi temizlenir
+
+            if (filtered.length === 0) { //burada eğer yukarıdaki fonksiyon çalıştığında kullanıcının aradığı ürün ile eşleşen kayıt bulunaamışsa ekrana uyarı bastırırırz
+                orderContainer.innerHTML = `
+                <div style="padding:24px; text-align:center;color:var(--muted);font-size:12px">
+                    Kriterlere uygun ürün bulanamadı
+                    </div>
+                `;
+
+                updateKPIs([]); // ürün bulunamadığı için boş liste gider ve yukarıda kayıtlı sipariş, toplam fiyat ve ort fiyat kısımları sıfırlanır çünkü aranan ürün yoktur.
+                return;
+            }
+
+
+
+            //dinamik element üretimi
+            //filtrelenen özelliklere uygun eleman varsa aşağıdaki kısım çalışır
+            filtered.forEach(order => { //filtered içeriisndeki elemanlar tek tek dönülür
+                const item = document.createElement("article"); //html içerisinde article elementi oluşturulur ve item içerisine atılır
+                item.className = "order-item"; //article elementine class verilir
+                item.setAttribute("data-id", order.id); //id'si tanımlanır
+
+                //aşağıdaki satırda kullanılacak css sınıfının seçimi yapılır. bunun için ternary operator kullanılmıştır
+                //order.category ile alınan kategoriye göre eğer mobilya ise mobilya css sınıfı, eğer aydınlatma ise aydınlatma css sınıfı ve eğer ikisi de değilse seramik sınıfı atansın denir
+                const badgeClass = order.category === "Mobilya" ? "badge--mobilya" : order.category === "Aydınlatma" ? "badge--aydinlatma" : "badge--seramik";
+
+                //oluşturduğumuz article elementi için bir html yazarız. böylece filtrelenen sonuç değişkenler ile ekrana yazılmış olacaktır
+                item.innerHTML = `
+                <div>
+                    <h5>${order.name}</h5>
+                    <p>BirimFiyat: ${order.price.toLocaleString("tr-TR")} tl </p>
+                </div>
+                <div class="meta-box">
+                    <span class="badge ${badgeClass}">${order.category}</span>
+                    <button class="btn-del" data-action="delete" > Sil </button>
+                </div>
+                `;
+
+                orderContainer.appendChild(item); //oluşturduğumuz ve item içerisine atadığımız article elementini orderContainera yani siparişlerin gözüktüğü tabloya basarız
+                updateKPIs(filtered); //bu fonksiyon ile de üst kısımdaki fiyat ve sipariş sayısı bilgilerini güncelleriz
+            })
+
+        }
+        searchInput.addEventListener("input", renderOrders); // bu kısım ürünü filtrelemek için adını arattığımız alana her bir harf girişinde çalışarak canlı arama sağlar
+        categoryFilter.addEventListener("change", renderOrders); //bu kısım kategori filtrelemesi yapıldığında çalışır
+        renderOrders(); //sayfayı ilk açtığımızda en başta tanımladığımız orders dizisini ve üst kısımdaki fiyat bilgilerini ekrana bastırır.
+    </script>
+</body>
+
+</html>
