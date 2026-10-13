@@ -28,3 +28,11 @@ static bool canUpdate(Widget oldWidget, Widget newWidget){
     return oldWidget.runtimeType=newWidget.runtimeType && oldWidget.key ==newWidget.key;
 }
 
+tate yaşam döngüsü
+
+*stateful widget : immutable(olarak değişmez) her rebuildde yeniden oluşturulur.
+*state : mutable (durumu saklar) rebuild sırasıdna çöpe atılmaz element tarafında devam eder.
+
+eğer iki sınıf birleşik olsaydı her rebuild esnasında kullanıcı girdileri sayaçlar kontrollerlar vb sıfırlanırdı. 
+
+
