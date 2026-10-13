@@ -1,4 +1,4 @@
-   print("ilk dersimiz - dart sdk aktif olmalı");
+print("ilk dersimiz - dart sdk aktif olmalı");
 //jsdeki gibi let x = "ahmet" ; x=42; gibi değişimleri burada kabul etmez
 
 //1. açık belirtilen veri tipleri
