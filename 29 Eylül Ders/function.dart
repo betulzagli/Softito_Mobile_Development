@@ -1,0 +1,26 @@
+//
+  typedef MetrikUyariKurali =bool Function(double deger);
+
+void metrikDenetle({
+  required String metrikAdi,
+  required double mevcutDeger,
+  required MetrikUyariKurali kural,
+  required void Function(String mesaj) alertTetikleyici,
+}){
+  if(kural(mevcutDeger)){
+    alertTetikleyici("uyarı: $metrikAdi eşikdeğerini aştı. mevuct: $mevcutDeger",);
+  }else{
+    print("$metrikAdi normal sınırlar içinde (${mevcutDeger})");
+  }
+}
+
+void main(){
+  print("metrik uyarıları");
+  final MetrikUyariKurali yuksekCpu=(deger) => deger >= 85.0; //%85 ve üstü
+  final MetrikUyariKurali yuksekRam = (deger) => deger >= 90.0; //%90 ve üstü
+  metrikDenetle(metrikAdi: "Cpu", mevcutDeger: 92.4, kural: yuksekCpu, alertTetikleyici: (msg)=> print("bildirim gönderildi - $msg"),);
+
+  metrikDenetle(metrikAdi: "ram", mevcutDeger: 64.0, kural: yuksekRam, alertTetikleyici: (msg)=>print("bildirim gönderildi - $msg"),);
+
+
+}
